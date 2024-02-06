@@ -2,11 +2,12 @@ import { fetchLocationData } from "./location";
 import type { LocationInfo } from "./location";
  
 const GEOCODE_API_URL = "https://geocode.maps.co/search";
+const WEATHER_API_URL = "https://api.open-meteo.com/v1/forecast";
 
 async function main(): Promise<number> {
     console.log(process.argv);
     //pnpm run weather LOCATION
-    if(process.argv.length !== 3) {
+    if(process.argv.length !== 3) { 
         console.log("Command to run app --> weather LOCATION")
         return 1;
     }

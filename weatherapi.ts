@@ -29,3 +29,68 @@ const weatherCodes: Record<number, string> = {
   99: "Thunderstorm with heavy hail",
 };
 
+interface CurrentWeatherApiResponse  {
+  temperature: string;
+  windspeed: string;
+  winddirection: number;
+  weathercode: number;
+  is_day: number;
+  time: string;
+}
+
+interface Temperature {
+  value: number;
+  unit: string;
+}
+
+const formatTemperature = (temp: Temperature): string => `${temp.value}${temp.unit}`;
+
+interface Wind {
+  speed: number;
+  direction: number;
+  unit: string;
+}
+
+const formatWind = (wind: Wind): string => `${wind.speed}${wind.unit}`;
+
+export class CurrentWeather {
+  temperature: Temperature;
+  wind: Wind;
+  weathercode: number;
+  daytime: boolean;
+  time: string;
+
+  constructor(apiresponse: CurrentWeatherApiResponse) {
+    this.temperature = {
+      value: parseInt(apiresponse.temperature),
+      unit: "C",
+    }
+    this.wind = {
+      speed: parseInt(apiresponse.windspeed),
+      direction: apiresponse.winddirection,
+      unit: "Kmh"
+    }
+    this.weathercode = apiresponse.weathercode;
+    this.daytime = apiresponse.is_day === 1;
+    this.time = apiresponse.time;
+  }
+
+  condition(): string  {
+    return weatherCodes[this.weathercode];
+  }
+
+  format(): string {
+    const descriptionLen = 16;
+    // padstart: To put some text in a certain location and doest allow to go past it - alignment purpose
+    const temp = "Temperature".padStart(descriptionLen, " ");
+    const windSpeed = "Wind Speed".padStart(descriptionLen, " ");
+    const condition = "Condition".padStart(descriptionLen, " ");
+
+    const formatted: string[] = [];
+    formatted.push(`${temp}: ${formatTemperature(this.temperature)}`);
+    formatted.push(`${windSpeed}: ${formatWind(this.wind)}`);
+    formatted.push(`${condition}: ${this.condition()}`);
+
+    return formatted.join("\n");
+  }
+}
